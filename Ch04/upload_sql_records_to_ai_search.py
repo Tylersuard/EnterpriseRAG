@@ -84,8 +84,18 @@ def ingest_all_records(sql_query):
       break
  
       for record in records:
-      print(f"Summarizing record with ID {record[0]}")
-      summarize_embed_upload(record)
+        if record[-1] > 0:
+          try:
+            search_client.delete_documents(
+              documents=[{"id": str(record[0])}])
+            continue
+          except:
+            continue
+            summarize_embed_upload(record)
+ 
+        else:
+          print(f"Summarizing record with ID {record[0]}")
+          summarize_embed_upload(record)
     
     total_records_transformed += len(records)
     print(f"Total records uploaded: {total_records_transformed}")
