@@ -35,3 +35,14 @@ results = search_client.search(
 results_list = list(results)
 for result in results_list:
     print(result)
+
+def sort_results(
+  results_list, 
+  field_name, 
+  descending=False):
+  sorted_results = sorted(
+    results_list, 
+    key=lambda x: x[field_name], 
+    reverse=descending)
+  return sorted_results
+print(sort_results(results_list, "ProductName", descending=False))
