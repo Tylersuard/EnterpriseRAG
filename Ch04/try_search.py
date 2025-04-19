@@ -18,4 +18,20 @@ results = search_client.search(
  
 for result in results:
   print(result)
+
+
+query = "tennis racket"
  
+embedding = embed_text(query)
+vector_query = VectorizedQuery(vector=embedding, k_nearest_neighbors=3, fields="Vector")
+ 
+results = search_client.search(
+  search_text=query,
+  vector_queries=[vector_query],
+  filter="Manufacturer eq 'Banana Angel inc.'",
+  select=["ProductName"],
+  top=3
+)
+results_list = list(results)
+for result in results_list:
+    print(result)
