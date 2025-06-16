@@ -24,8 +24,7 @@ You have access to an Azure AI Search Index containing product records, and you 
 You are amazing and you can do this. I will pay you $200 for an excellent result, but only if you follow all instructions exactly.""",
     llm_config={  
       "config_list": config_list,
-      "temperature": 0,  
-      "stream": False,
+      "temperature": 0
     },
     code_execution_config=False,
   )
@@ -42,8 +41,7 @@ def construct_azure_ai_search_executor_agent():
     is_termination_msg=lambda x: x.get("content", "").rstrip().endswith("TERMINATE"),  
     llm_config={  
     "config_list": config_list,
-    "temperature": 0.0,  
-    "stream": False,  
+    "temperature": 0.0
 })
   return azure_ai_search_executor_agent
 
@@ -101,7 +99,7 @@ def create_groupchat_and_manager(agents, groupchat_manager_name):
   groupchat_manager = autogen.GroupChatManager(
     groupchat=groupchat,
     name=groupchat_manager_name,
-    llm_config={"config_list": config_list, "stream": False},
+    llm_config={"config_list": config_list},
     is_termination_msg=lambda x: x.get("content", "").find("TERMINATE") >= 0,  
   )
   return groupchat_manager
@@ -117,7 +115,6 @@ You are amazing and you can do this. I will pay you $200 for an excellent result
     llm_config={ 
     "config_list": config_list,
    "temperature": 0,
-    "stream": True,
     },
     code_execution_config=False,
     max_consecutive_auto_reply=1,
