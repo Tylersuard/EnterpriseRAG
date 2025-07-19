@@ -43,5 +43,13 @@ def store_user_feedback(req: func.HttpRequest) -> func.HttpResponse:
             "An error occurred while storing feedback.",
             status_code=500
         )
-    return func.HttpResponse(f"Successfully stored {cosmosdb_response['id']}")
+    return func.HttpResponse(
+    "Successfully stored feedback.",
+    status_code=200,
+    headers={
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type"
+    }
+)
 
