@@ -104,14 +104,24 @@
             margin-top: 10px;
         }
 
-        .star {
+        .thumb {
             cursor: pointer;
-            font-size: 20px;
+            font-size: 24px;
             color: #ccc;
+            margin: 0 10px;
+            transition: color 0.2s;
         }
 
-        .star.selected {
-            color: gold;
+        .thumb:hover {
+            color: #888;
+        }
+
+        .thumb.selected.thumbs-up {
+            color: #4CAF50;
+        }
+
+        .thumb.selected.thumbs-down {
+            color: #f44336;
         }
 
         /* Modal styles */
@@ -204,7 +214,7 @@
                 const email = document.getElementById("userEmail").value;
                 const question = document.getElementById("userQuestion").value;
                 const messageContainer = document.getElementById("messageContainer");
-                const socket = new WebSocket('ws://127.0.0.1:8080');
+                const socket = new WebSocket('wss://your_web_app_url');
                 let answerStarted = false;
                 let answerString = "";
 
@@ -226,8 +236,11 @@
                 };
 
                 socket.onmessage = function (event) {
+                    // Always print the raw data for debugging
+                    console.log("Received:", event.data);
+
+                    // If the message contains "ANSWER:", start the answer section
                     if (event.data.includes("ANSWER:")) {
-                        console.log("String 'ANSWER:' found in data");
                         answerStarted = true;
                         // Create new bot message container
                         const botMessage = document.createElement('div');
@@ -235,6 +248,8 @@
                         botMessage.textContent = "RAG Chatbot: ";
                         messageContainer.appendChild(botMessage);
                     }
+
+                    // Try to extract content from JSON, but if not present, just append the raw data
                     const content = event.data.match(/"content":"([^"]*)"/);
                     if (content && answerStarted) {
                         let cleanContent = content[1].replace(/["}\]]+$/g, '');
@@ -245,6 +260,21 @@
                             messageContainer.scrollTop = messageContainer.scrollHeight;
                         }
                         answerString += cleanContent;
+                    } else if (answerStarted) {
+                        // If not JSON, just append the raw data (except the "ANSWER:" marker)
+                        if (!event.data.includes("ANSWER:")) {
+                            // Optionally strip ANSI codes if needed
+                            function stripAnsiCodes(text) {
+                                return text.replace(/\x1b\[[0-9;]*m/g, '');
+                            }
+                            const cleanData = stripAnsiCodes(event.data);
+                            const lastBotMessage = messageContainer.querySelector('.bot-message:last-child');
+                            if (lastBotMessage) {
+                                lastBotMessage.textContent += cleanData;
+                                messageContainer.scrollTop = messageContainer.scrollHeight;
+                            }
+                            answerString += cleanData;
+                        }
                     }
                 };
 
@@ -258,35 +288,47 @@
                         const ratingDiv = document.createElement('div');
                         ratingDiv.className = 'rating';
                         ratingDiv.innerHTML = 'Rate this answer: ' +
-                            '<span class="star" data-value="1">&#9733;</span>' +
-                            '<span class="star" data-value="2">&#9733;</span>' +
-                            '<span class="star" data-value="3">&#9733;</span>' +
-                            '<span class="star" data-value="4">&#9733;</span>' +
-                            '<span class="star" data-value="5">&#9733;</span>';
+                            '<span class="thumb thumbs-up" data-value="up">👍</span>' +
+                            '<span class="thumb thumbs-down" data-value="down">👎</span>';
                         lastBotMessage.appendChild(ratingDiv);
-                        ratingDiv.querySelectorAll('.star').forEach(function (star) {
-                            star.addEventListener('click', function () {
+                        ratingDiv.querySelectorAll('.thumb').forEach(function (thumb) {
+                            thumb.addEventListener('click', function () {
                                 const rating = this.getAttribute('data-value');
-                                // Highlight selected stars
-                                ratingDiv.querySelectorAll('.star').forEach(function (s, index) {
-                                    s.classList.toggle('selected', index < rating);
+                                // Clear previous selections
+                                ratingDiv.querySelectorAll('.thumb').forEach(function (t) {
+                                    t.classList.remove('selected');
                                 });
+                                // Highlight selected thumb
+                                this.classList.add('selected');
                                 // Popup for rating reason
                                 const reason = prompt("Please provide a reason for your rating:");
-                                // Send question, answer, rating, and reason to CosmosDB via API call
-                                fetch('https://your-cosmosdb-api-endpoint.com/rate', {
+                                // Send question, answer, rating, reason, and email to CosmosDB via API call
+                                const payload = {
+                                    question:question,
+                                    answer:answerString,
+                                    rating:rating,
+                                    reason: reason,
+                                    email: email
+                                };
+                                console.log("Sending payload: ", payload);
+                                fetch('https://your-function-app-url/api/your_route_name', {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json'
                                     },
-                                    body: JSON.stringify({
-                                        question: question,
-                                        answer: answerString,
-                                        rating: rating,
-                                        reason: reason
-                                    })
+                                    body: JSON.stringify(payload)
                                 })
-                                .then(response => response.json())
+                                .then(response => {
+                                    // Try to parse as JSON, fallback to text
+                                    return response.text().then(text => {
+                                        console.log('Raw response:', text);
+                                        try {
+                                            return JSON.parse(text);
+                                        } catch {
+                                            return text;
+                                        }
+                                    });
+                                })
                                 .then(data => console.log('Rating saved:', data))
                                 .catch(error => console.error('Error:', error));
                                 console.log('Rating submitted:', rating);
