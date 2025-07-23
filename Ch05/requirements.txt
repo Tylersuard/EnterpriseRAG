@@ -2,6 +2,6 @@ aiohttp==3.10.10
 azure-cosmos==4.9.0
 azure-search-documents==11.5.1
 openai==1.75.0
-pyautogen[websockets]>=0.9
+pyautogen[websockets]==0.9
 pytest
 python-dotenv==1.0.1
