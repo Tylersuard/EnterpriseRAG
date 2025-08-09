@@ -1,5 +1,5 @@
-id,department,patient_name,owner_email,illness,allowed_roles,allowed_fields
-rec-001,Cardiology,Lawrence Dillon,lawrence.dillon@example.com,Heart Attack,"[""Owner"",""Cardiology"",""DataScientist""]","{""Owner"":[""*""],""CEO"":[""*""],""DataScientist"":[""illness"",""visit_date"",""notes""]}"
-rec-002,Oncology,Kaitlyn Chaney,kaitlyn.chaney@example.com,Lung Cancer,"[""Owner"",""Oncology"",""DataScientist""]","{""Owner"":[""*""],""CEO"":[""*""],""DataScientist"":[""illness"",""visit_date"",""notes""]}"
-rec-003,Cardiology,Tyler Murray,tyler.murray@example.com,Arhythmia,"[""Owner"",""Cardiology"",""DataScientist""]","{""Owner"":[""*""],""CEO"":[""*""],""DataScientist"":[""illness"",""visit_date"",""notes""]}"
-rec-004,Oncology,Steven Freeman,steven.freeman@example.com,Leukemia,"[""Owner"",""Oncology"",""DataScientist""]","{""Owner"":[""*""],""CEO"":[""*""],""DataScientist"":[""illness"",""visit_date"",""notes""]}"
+id,department,patient_name,owner_email,illness,visit_date,required_permissions,allowed_fields
+rec-001,Cardiology,Lawrence Dillon,lawrence.dillon@example.com,Heart Attack,12-20-24,"[""Owner"",""Cardiology"",""DataScientist""]","{""Owner"":[""*""],""Cardiology"":[""*""],""DataScientist"":[""illness"",""visit_date""]}"
+rec-002,Oncology,Kaitlyn Chaney,kaitlyn.chaney@example.com,Lung Cancer,11-2-24,"[""Owner"",""Oncology"",""DataScientist""]","{""Owner"":[""*""],""Oncology"":[""*""],""DataScientist"":[""illness"",""visit_date""]}"
+rec-003,Cardiology,Tyler Murray,tyler.murray@example.com,Arhythmia,1-2-25,"[""Owner"",""Cardiology"",""DataScientist""]","{""Owner"":[""*""],""Cardiology"":[""*""],""DataScientist"":[""illness"",""visit_date""]}"
+rec-004,Oncology,Steven Freeman,steven.freeman@example.com,Leukemia,2-3-24,"[""Owner"",""Oncology"",""DataScientist""]","{""Owner"":[""*""],""Oncology"":[""*""],""DataScientist"":[""illness"",""visit_date""]}"
